@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#f8fafc">
+  <title>Student Dashboard · Colexa</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['DM Sans', 'sans-serif'],
+            display: ['Plus Jakarta Sans', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace']
+          },
+          colors: {
+            brand: {
+              50: '#eef2ff',
+              100: '#e0e7ff',
+              500: '#4f46e5',
+              600: '#4338ca',
+              700: '#3730a3'
+            }
+          },
+          boxShadow: {
+            soft: '0 8px 30px rgba(15, 23, 42, .045)',
+            card: '0 2px 10px rgba(15, 23, 42, .035)'
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    :root {
+      --primary: 234 89% 64%;
+      --background: 210 40% 98%;
+      --foreground: 222 47% 11%;
+      --border: 214 32% 91%;
+      --success: 142 76% 36%;
+      --warning: 38 92% 50%;
+      --destructive: 0 84% 60%;
+      --info: 199 89% 48%;
+      --radius: 12px;
+    }
+    * { box-sizing: border-box; }
+    body { background: hsl(var(--background)); color: hsl(var(--foreground)); }
+    .card { border: 1px solid hsl(var(--border)); border-radius: var(--radius); background: #fff; }
+    .nav-link { transition: background .2s ease, color .2s ease; }
+    .nav-link:not(.active):hover { background: #f1f5f9; color: #1e293b; }
+    .active { background: #eef2ff; color: #4338ca; }
+    .spotlight { position: relative; overflow: hidden; }
+    .spotlight:after {
+      content: ""; position: absolute; width: 210px; height: 210px; top: -112px; right: -62px;
+      border-radius: 999px; background: radial-gradient(circle, rgba(129,140,248,.12), transparent 70%);
+      pointer-events: none;
+    }
+    .schedule-line:before {
+      content: ""; position: absolute; left: 9px; top: 10px; bottom: 10px; width: 1px; background: #e2e8f0;
+    }
+    .scrollbar-hide { scrollbar-width: none; }
+    .scrollbar-hide::-webkit-scrollbar { display: none; }
+    @media (prefers-reduced-motion: no-preference) {
+      .enter { animation: enter .55s ease both; }
+      .enter-delay { animation: enter .55s .1s ease both; }
+      @keyframes enter { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    }
+  </style>
+</head>
+<body class="min-h-screen font-sans antialiased">
+  <div class="min-h-screen lg:flex">
+    <aside class="hidden w-[258px] shrink-0 flex-col border-r border-slate-200/80 bg-white px-5 py-6 lg:flex">
+      <a href="#dashboard" class="flex items-center gap-3 px-2" aria-label="Colexa home">
+        <span class="grid h-10 w-10 place-items-center rounded-xl bg-brand-500 text-white shadow-lg shadow-indigo-200">
+          <svg viewBox="0 0 24 24" class="h-6 w-6" fill="none" aria-hidden="true"><path d="M5 7.5 12 4l7 3.5v9L12 20l-7-3.5v-9Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="m5.5 7.8 6.5 3.4 6.5-3.4M12 11.5V20" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+        </span>
+        <span class="font-display text-[21px] font-extrabold tracking-[-.05em] text-slate-900">colexa<span class="text-brand-500">.</span></span>
+      </a>
+
+      <div class="mt-9 rounded-xl border border-slate-100 bg-slate-50/80 p-3">
+        <div class="flex items-center gap-3">
+          <div class="relative shrink-0">
+            <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=96&q=80" alt="Ananya Sharma" class="h-10 w-10 rounded-full object-cover ring-2 ring-white">
+            <span class="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full border-2 border-white bg-emerald-500"></span>
+          </div>
+          <div class="min-w-0">
+            <p class="truncate text-sm font-semibold text-slate-800">Ananya Sharma</p>
+            <p class="mt-0.5 font-mono text-[10px] tracking-wide text-slate-500">1AP23CS042</p>
+          </div>
+        </div>
+        <div class="mt-3 flex items-center justify-between border-t border-slate-200/80 pt-3 text-[11px]">
+          <span class="text-slate-500">Computer Science · Sem 6</span>
+          <span class="rounded-md bg-indigo-50 px-1.5 py-1 font-semibold text-indigo-700">STUDENT</span>
+        </div>
+      </div>
+
+      <div class="mt-8">
+        <p class="mb-3 px-3 text-[10px] font-bold uppercase tracking-[.15em] text-slate-400">Workspace</p>
+        <nav aria-label="Main navigation" class="space-y-1">
+          <a href="#dashboard" class="nav-link active flex items-center gap-3 rounded-lg px-3 py-2.5 text-[13px] font-semibold">
+            <svg viewBox="0 0 24 24" class="h-[18px] w-[18px]" fill="none" aria-hidden="true"><rect x="3.5" y="3.5" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.7"/><rect x="13.5" y="3.5" width="7" height="5" rx="1.5" stroke="currentColor" stroke-width="1.7"/><rect x="13.5" y="11.5" width="7" height="9" rx="1.5" stroke="currentColor" stroke-width="1.7"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.7"/></svg>
+            Dashboard <span class="ml-auto h-1.5 w-1.5 rounded-full bg-brand-500"></span>
+          </a>
+          <a href="#timetable" class="nav-link flex items-center gap-3 rounded-lg px-3 py-2.5 text-[13px] font-medium text-slate-500">
+            <svg viewBox="0 0 24 24" class="h-[18px] w-[18px]" fill="none" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="2" stroke="currentColor" stroke-width="1.7"/><path d="M7.5 3.5v3M16.5 3.5v3M3.5 9h17M8 12.5h2M14 12.5h2M8 16h2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+            Timetable
+          </a>
+          <a href="#attendance" class="nav-link flex items-center gap-3 rounded-lg px-3 py-2.5 text-[13px] font-medium text-slate-500">
+            <svg viewBox="0 0 24 24" class="h-[18px] w-[18px]" fill="none" aria-hidden="true"><path d="M4 19V5m0 14h16M7.5 15.5l3.2-3.2 2.7 2.1 4.8-6.1" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><circle cx="18.2" cy="8.3" r="1.3" fill="currentColor"/></svg>
+            Attendance
+            <span class="ml-auto rounded-full bg-amber-50 px-2 py-0.5 text-[10px] font-semibold text-amber-700">2 alerts</span>
+          </a>
+          <a href="#announcements" class="nav-link flex items-center gap-3 rounded-lg px-3 py-2.5 text-[13px] font-medium text-slate-500">
+            <svg viewBox="0 0 24 24" class="h-[18px] w-[18px]" fill="none" aria-hidden="true"><path d="M4 10v4a2 2 0 0 0 2 2h2l7 3V5l-7 3H6a2 2 0 0 0-2 2ZM15 8.5a4 4 0 0 1 0 7M8 16l1.2 4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M19 9.5a7 7 0 0 1 0 5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+            Announcements
+            <span class="ml-auto h-2 w-2 rounded-full bg-rose-500"></span>
+          </a>
+        </nav>
+      </div>
+
+      <div class="mt-8">
+        <p class="mb-3 px-3 text-[10px] font-bold uppercase tracking-[.15em] text-slate-400">Academics</p>
+        <nav aria-label="Academic navigation" class="space-y-1">
+          <a href="#subjects" class="nav-link flex items-center gap-3 rounded-lg px-3 py-2.5 text-[13px] font-medium text-slate-500">
+            <svg viewBox="0 0 24 24" class="h-[18px] w-[18px]" fill="none" aria-hidden="true"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v16H6.5A2.5 2.5 0 0 0 4 21V5.5Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M4 18.5A2.5 2.5 0 0 1 6.5 16H20M8 7h8M8 10h6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+            My Subjects
+          </a>
+          <a href="#student-profile" class="nav-link flex items-center gap-3 rounded-lg px-3 py-2.5 text-[13px] font-medium text-slate-500">
+            <svg viewBox="0 0 24 24" class="h-[18px] w-[18px]" fill="none" aria-hidden="true"><circle cx="12" cy="8" r="3.2" stroke="currentColor" stroke-width="1.7"/><path d="M5.5 20a6.5 6.5 0 0 1 13 0" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M4 4h2M18 4h2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+            Student Profile
+          </a>
+        </nav>
+      </div>
+
+      <div class="mt-auto rounded-xl bg-slate-900 p-4 text-white">
+        <div class="flex items-center gap-2">
+          <span class="grid h-7 w-7 place-items-center rounded-lg bg-white/10 text-indigo-200">
+            <svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" aria-hidden="true"><path d="M12 3.5 14.5 9l6 .7-4.5 4.1 1.2 5.9-5.2-3-5.2 3 1.2-5.9-4.5-4.1 6-.7L12 3.5Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>
+          </span>
+          <span class="text-xs font-semibold">Need a hand?</span>
+        </div>
+        <p class="mt-2 text-[11px] leading-relaxed text-slate-300">Your academic office is just a message away.</p>
+        <a href="#support" class="mt-3 inline-flex items-center gap-1 text-[11px] font-semibold text-indigo-200">Visit student support <span aria-hidden="true">→</span></a>
+      </div>
+      <p class="mt-4 px-2 text-[10px] text-slate-400">© 2026 Colexa Campus</p>
+    </aside>
+
+    <main id="dashboard" class="min-w-0 flex-1">
+      <header class="sticky top-0 z-20 border-b border-slate-200/80 bg-white/90 backdrop-blur-xl">
+        <div class="mx-auto flex h-[68px] max-w-[1600px] items-center justify-between gap-4 px-4 sm:px-6 xl:px-9">
+          <div class="flex min-w-0 items-center gap-3">
+            <a href="#dashboard" class="flex items-center gap-2 lg:hidden">
+              <span class="grid h-9 w-9 place-items-center rounded-xl bg-brand-500 text-white">
+                <svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" aria-hidden="true"><path d="M5 7.5 12 4l7 3.5v9L12 20l-7-3.5v-9Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="m5.5 7.8 6.5 3.4 6.5-3.4M12 11.5V20" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+              </span>
+              <span class="font-display text-lg font-extrabold tracking-[-.05em] text-slate-900">colexa<span class="text-brand-500">.</span></span>
+            </a>
+            <div class="hidden h-8 w-px bg-slate-200 lg:block"></div>
+            <div class="min-w-0">
+              <p class="truncate text-xs font-semibold text-slate-800 sm:text-sm">Apex Institute of Technology</p>
+              <p class="hidden text-[11px] text-slate-400 sm:block">Student Portal <span class="px-1">/</span> Dashboard</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-2 sm:gap-3">
+            <div class="hidden h-9 w-[210px] items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 md:flex">
+              <svg viewBox="0 0 24 24" class="h-4 w-4 text-slate-400" fill="none" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.3" stroke="currentColor" stroke-width="1.7"/><path d="m15.5 15.5 4 4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+              <span class="text-xs text-slate-400">Search anything...</span>
+              <span class="ml-auto rounded border border-slate-200 bg-white px-1.5 py-0.5 font-mono text-[9px] text-slate-400">⌘ K</span>
+            </div>
+            <span class="hidden rounded-full border border-slate-200 bg-white px-3 py-1.5 text-[11px] font-medium text-slate-500 sm:inline-flex">Mon, 12 Oct 2026</span>
+            <button type="button" aria-label="Notifications" class="relative grid h-9 w-9 place-items-center rounded-lg border border-slate-200 bg-white text-slate-500">
+              <svg viewBox="0 0 24 24" class="h-[18px] w-[18px]" fill="none" aria-hidden="true"><path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9ZM10 21h4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <span class="absolute right-2 top-1.5 h-1.5 w-1.5 rounded-full bg-rose-500 ring-2 ring-white"></span>
+            </button>
+            <div class="flex items-center gap-2 border-l border-slate-200 pl-3">
+              <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=96&q=80" alt="Ananya Sharma" class="h-8 w-8 rounded-full object-cover">
+              <div class="hidden sm:block">
+                <p class="text-xs font-semibold text-slate-700">Ananya Sharma</p>
+                <p class="text-[10px] text-slate-400">6th Semester</p>
+              </div>
+              <svg viewBox="0 0 20 20" class="hidden h-4 w-4 text-slate-400 sm:block" fill="none" aria-hidden="true"><path d="m5 7.5 5 5 5-5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+          </div>
+        </div>
+        <nav aria-label="Mobile navigation" class="scrollbar-hide flex gap-1 overflow-x-auto border-t border-slate-100 px-4 py-2 lg:hidden">
+          <a href="#dashboard" class="rounded-md bg-indigo-50 px-3 py-1.5 text-xs font-semibold text-indigo-700">Dashboard</a>
+          <a href="#timetable" class="rounded-md px-3 py-1.5 text-xs font-medium text-slate-500">Timetable</a>
+          <a href="#attendance" class="rounded-md px-3 py-1.5 text-xs font-medium text-slate-500">Attendance</a>
+          <a href="#subjects" class="rounded-md px-3 py-1.5 text-xs font-medium text-slate-500">Subjects</a>
+          <a href="#announcements" class="rounded-md px-3 py-1.5 text-xs font-medium text-slate-500">Notices</a>
+        </nav>
+      </header>
+
+      <div class="mx-auto max-w-[1600px] px-4 pb-10 pt-6 sm:px-6 sm:pt-8 xl:px-9">
+        <section id="student-profile" class="enter flex flex-col justify-between gap-5 sm:flex-row sm:items-end">
+          <div>
+            <div class="mb-2 flex items-center gap-2">
+              <span class="h-1.5 w-1.5 rounded-full bg-emerald-500"></span>
+              <p class="text-[11px] font-semibold uppercase tracking-[.12em] text-slate-400">Monday, October 12, 2026 <span class="px-1">·</span> Week 7</p>
+            </div>
+            <h1 class="font-display text-[26px] font-bold tracking-[-.045em] text-slate-900 sm:text-[32px]">Good morning, Ananya <span aria-hidden="true">☀️</span></h1>
+            <p class="mt-1.5 text-sm text-slate-500">Here’s your academic snapshot for today. Make it a great one.</p>
+          </div>
+          <div class="flex flex-wrap items-center gap-2">
+            <span class="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-[11px] font-medium text-slate-600">
+              <svg viewBox="0 0 20 20" class="h-3.5 w-3.5 text-brand-500" fill="none" aria-hidden="true"><path d="M3 5.5h14v11H3zM6 3.5v4M14 3.5v4M3 9h14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              Academic Year 2026–27
+            </span>
+            <span class="inline-flex items-center gap-1.5 rounded-full border border-indigo-100 bg-indigo-50 px-3 py-1.5 text-[11px] font-semibold text-indigo-700">
+              <span class="h-1.5 w-1.5 rounded-full bg-indigo-500"></span> CSE · Semester 6 · Section A
+            </span>
+          </div>
+        </section>
+
+        <section aria-label="Academic highlights" class="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-4">
+          <article class="card spotlight enter p-4 shadow-card sm:p-5">
+            <div class="flex items-start justify-between">
+              <span class="grid h-9 w-9 place-items-center rounded-lg bg-indigo-50 text-indigo-600">
+                <svg viewBox="0 0 24 24" class="h-[18px] w-[18px]" fill="none" aria-hidden="true"><path d="M4 19V5m0 14h16M7.5 15.5l3.2-3.2 2.7 2.1 4.8-6.1" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </span>
+              <span class="rounded-full bg-emerald-50 px-2 py-1 text-[10px] font-semibold text-emerald-700">On track</span>
+            </div>
+            <p class="mt-4 text-[11px] font-medium text-slate-500">Overall attendance</p>
+            <div class="mt-0.5 flex items-baseline gap-2">
+              <span class="font-display text-[26px] font-bold tracking-tight text-slate-900">86.4%</span>
+              <span class="text-[10px] font-medium text-emerald-600">+2.1%</span>
+            </div>
+            <div class="mt-2 h-1.5 overflow-hidden rounded-full bg-slate-100"><div class="h-full w-[86.4%] rounded-full bg-emerald-500"></div></div>
+          </article>
+          <article class="card enter-delay p-4 shadow-card sm:p-5">
+            <div class="flex items-start justify-between">
+              <span class="grid h-9 w-9 place-items-center rounded-lg bg-sky-50 text-sky-600">
+                <svg viewBox="0 0 24 24" class="h-[18px] w-[18px]" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="1.7"/><path d="M12 7v5l3.5 2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </span>
+              <span class="text-[10px] font-medium text-slate-400">This week</span>
+            </div>
+            <p class="mt-4 text-[11px] font-medium text-slate-500">Classes attended</p>
+            <div class="mt-0.5 flex items-baseline gap-2">
+              <span class="font-display text-[26px] font-bold tracking-tight text-slate-900">22<span class="text-base font-semibold text-slate-400">/25</span></span>
+              <span class="text-[10px] font-medium text-slate-400">sessions</span>
+            </div>
+            <p class="mt-2 text-[10px] text-slate-400">3 classes missed this week</p>
+          </article>
+          <article class="card enter-delay p-4 shadow-card sm:p-5">
+            <div class="flex items-start justify-between">
+              <span class="grid h-9 w-9 place-items-center rounded-lg bg-violet-50 text-violet-600">
+                <svg viewBox="0 0 24 24" class="h-[18px] w-[18px]" fill="none" aria-hidden="true"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v16H6.5A2.5 2.5 0 0 0 4 21V5.5Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M4 18.5A2.5 2.5 0 0 1 6.5 16H20M8 7h8M8 10h6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+              </span>
+              <span class="text-[10px] font-medium text-slate-400">Semester 6</span>
+            </div>
+            <p class="mt-4 text-[11px] font-medium text-slate-500">Enrolled subjects</p>
+            <div class="mt-0.5 flex items-baseline gap-2">
+              <span class="font-display text-[26px] font-bold tracking-tight text-slate-900">6</span>
+              <span class="text-[10px] font-medium text-slate-400">courses</span>
+            </div>
+            <p class="mt-2 text-[10px] text-slate-400">5 theory <span class="px-1">·</span> 1 lab</p>
+          </article>
+          <article class="card enter-delay p-4 shadow-card sm:p-5">
+            <div class="flex items-start justify-between">
+              <span class="grid h-9 w-9 place-items-center rounded-lg bg-amber-50 text-amber-600">
+                <svg viewBox="0 0 24 24" class="h-[18px] w-[18px]" fill="none" aria-hidden="true"><path d="M5 5h14v15H5zM8 3.5v3M16 3.5v3M5 9h14" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M8.5 13h2M13.5 13h2M8.5 16.5h2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+              </span>
+              <span class="rounded-full bg-amber-50 px-2 py-1 text-[10px] font-semibold text-amber-700">Upcoming</span>
+            </div>
+            <p class="mt-4 text-[11px] font-medium text-slate-500">Next assessment</p>
+            <p class="mt-0.5 font-display text-[19px] font-bold tracking-tight text-slate-900">Oct 19</p>
+            <p class="mt-2 text-[10px] text-slate-400">Database Systems · Internal 2</p>
+          </article>
+        </section>
+
+        <div class="mt-5 grid grid-cols-1 gap-5 xl:grid-cols-[minmax(0,1.45fr)_minmax(350px,.85fr)]">
+          <section id="attendance" class="card p-5 shadow-soft sm:p-6">
+            <div class="flex flex-wrap items-start justify-between gap-3">
+              <div>
+                <div class="flex items-center gap-2">
+                  <h2 class="font-display text-[16px] font-bold tracking-tight text-slate-900">Attendance overview</h2>
+                  <span class="rounded-md bg-emerald-50 px-2 py-1 text-[9px] font-bold uppercase tracking-wide text-emerald-700">Healthy</span>
+                </div>
+                <p class="mt-1 text-xs text-slate-400">Your attendance is above the 75% requirement.</p>
+              </div>
+              <a href="#subjects" class="inline-flex items-center gap-1 text-[11px] font-semibold text-brand-600">View breakdown <span aria-hidden="true">→</span></a>
+            </div>
+            <div class="mt-5 grid items-center gap-6 sm:grid-cols-[180px_1fr] sm:gap-8">
+              <div class="relative mx-auto h-[164px] w-[164px]">
+                <svg viewBox="0 0 164 164" class="h-full w-full -rotate-90" aria-label="Overall attendance 86.4 percent" role="img">
+                  <circle cx="82" cy="82" r="68" fill="none" stroke="#ecfdf5" stroke-width="13"/>
+                  <circle cx="82" cy="82" r="68" fill="none" stroke="#10b981" stroke-width="13" stroke-linecap="round" stroke-dasharray="369 428"/>
+                </svg>
+                <div class="absolute inset-0 flex flex-col items-center justify-center">
+                  <span class="font-display text-[34px] font-bold tracking-[-.05em] text-slate-900">86.4<span class="text-lg">%</span></span>
+                  <span class="mt-0.5 text-[10px] font-medium text-slate-400">OVERALL</span>
+                </div>
+              </div>
+              <div>
+                <div class="grid grid-cols-2 gap-3">
+                  <div class="rounded-lg bg-slate-50 p-3">
+                    <p class="text-[10px] font-medium text-slate-400">Present</p>
+                    <p class="mt-1 font-display text-lg font-bold text-slate-800">152 <span class="text-[10px] font-medium text-slate-400">classes</span></p>
+                  </div>
+                  <div class="rounded-lg bg-slate-50 p-3">
+                    <p class="text-[10px] font-medium text-slate-400">Absent</p>
+                    <p class="mt-1 font-display text-lg font-bold text-slate-800">24 <span class="text-[10px] font-medium text-slate-400">classes</span></p>
+                  </div>
+                </div>
+                <div class="mt-4 rounded-lg border border-emerald-100 bg-emerald-50/70 p-3">
+                  <div class="flex items-start gap-2.5">
+                    <span class="mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full bg-emerald-100 text-emerald-700">
+                      <svg viewBox="0 0 20 20" class="h-3 w-3" fill="none" aria-hidden="true"><path d="m5 10 3.2 3.2L15 6.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </span>
+                    <div>
+                      <p class="text-[11px] font-semibold text-emerald-900">You’re in a good position</p>
+                      <p class="mt-0.5 text-[10px] leading-relaxed text-emerald-800/75">You can miss up to 20 more classes and stay above the 75% threshold.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="card p-5 shadow-soft sm:p-6">
+            <div class="flex items-start justify-between">
+              <div>
+                <div class="flex items-center gap-2">
+                  <h2 class="font-display text-[16px] font-bold tracking-tight text-slate-900">Today’s classes</h2>
+                  <span class="rounded-full bg-indigo-50 px-2 py-0.5 text-[10px] font-semibold text-indigo-700">4 classes</span>
+                </div>
+                <p class="mt-1 text-xs text-slate-400">Monday, October 12</p>
+              </div>
+              <a href="#timetable" aria-label="View full timetable" class="grid h-8 w-8 place-items-center rounded-lg border border-slate-200 text-slate-500">
+                <svg viewBox="0 0 20 20" class="h-4 w-4" fill="none" aria-hidden="true"><path d="M4 6h12M4 10h12M4 14h12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+              </a>
+            </div>
+            <div class="schedule-line relative mt-5 space-y-3 pl-7">
+              <article class="relative rounded-lg border border-indigo-100 bg-indigo-50/65 p-3">
+                <span class="absolute -left-[23px] top-4 h-2 w-2 rounded-full bg-brand-500 ring-4 ring-white"></span>
+                <div class="flex items-center justify-between gap-2">
+                  <span class="font-mono text-[10px] font-medium text-brand-700">09:00 – 10:00</span>
+                  <span class="rounded-full bg-indigo-100 px-2 py-0.5 text-[9px] font-bold text-indigo-700">NOW</span>
+                </div>
+                <p class="mt-1 text-xs font-semibold text-slate-800">Compiler Design</p>
+                <p class="mt-1 text-[10px] text-slate-500">Dr. Meera Rao <span class="px-1">·</span> Room C-204</p>
+              </article>
+              <article class="relative rounded-lg border border-slate-100 bg-white p-3">
+                <span class="absolute -left-[23px] top-4 h-2 w-2 rounded-full bg-slate-300 ring-4 ring-white"></span>
+                <div class="flex items-center justify-between gap-2">
+                  <span class="font-mono text-[10px] font-medium text-slate-500">10:15 – 11:15</span>
+                  <span class="text-[9px] font-medium text-slate-400">UP NEXT</span>
+                </div>
+                <p class="mt-1 text-xs font-semibold text-slate-800">Database Systems</p>
+                <p class="mt-1 text-[10px] text-slate-500">Prof. Kiran Shetty <span class="px-1">·</span> Room B-112</p>
+              </article>
+              <article class="relative rounded-lg border border-slate-100 bg-white p-3">
+                <span class="absolute -left-[23px] top-4 h-2 w-2 rounded-full bg-slate-300 ring-4 ring-white"></span>
+                <div class="flex items-center justify-between gap-2">
+                  <span class="font-mono text-[10px] font-medium text-slate-500">11:30 – 12:30</span>
+                  <span class="text-[9px] font-medium text-slate-400">IN 1 HR</span>
+                </div>
+                <p class="mt-1 text-xs font-semibold text-slate-800">Computer Networks</p>
+                <p class="mt-1 text-[10px] text-slate-500">Dr. Arjun Nair <span class="px-1">·</span> Room C-106</p>
+              </article>
+              <article class="relative rounded-lg border border-slate-100 bg-white p-3">
+                <span class="absolute -left-[23px] top-4 h-2 w-2 rounded-full bg-slate-300 ring-4 ring-white"></span>
+                <div class="flex items-center justify-between gap-2">
+                  <span class="font-mono text-[10px] font-medium text-slate-500">14:00 – 16:00</span>
+                  <span class="text-[9px] font-medium text-slate-400">AFTER LUNCH</span>
+                </div>
+                <p class="mt-1 text-xs font-semibold text-slate-800">Machine Learning Lab</p>
+                <p class="mt-1 text-[10px] text-slate-500">Ms. Priya Kulkarni <span class="px-1">·</span> AI Lab 2</p>
+              </article>
+            </div>
+            <div class="mt-4 flex items-center justify-between border-t border-slate-100 pt-3 text-[10px]">
+              <span class="text-slate-400">Next break <span class="font-medium text-slate-600">12:30 – 1:30 PM</span></span>
+              <a href="#timetable" class="font-semibold text-brand-600">Full timetable →</a>
+            </div>
+          </section>
+        </div>
+
+        <div class="mt-5 grid grid-cols-1 gap-5 xl:grid-cols-[minmax(0,1.45fr)_minmax(350px,.85fr)]">
+          <section id="subjects" class="card p-5 shadow-soft sm:p-6">
+            <div class="flex flex-wrap items-start justify-between gap-3">
+              <div>
+                <h2 class="font-display text-[16px] font-bold tracking-tight text-slate-900">Subject attendance</h2>
+                <p class="mt-1 text-xs text-slate-400">A quick look at how you’re doing in each course.</p>
+              </div>
+              <a href="#attendance" class="text-[11px] font-semibold text-brand-600">Attendance history →</a>
+            </div>
+            <div class="mt-5 space-y-4">
+              <article class="group rounded-lg border border-slate-100 p-3.5 transition hover:border-slate-200 sm:px-4">
+                <div class="flex items-center justify-between gap-3">
+                  <div class="flex min-w-0 items-center gap-3">
+                    <span class="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-violet-50 text-[10px] font-bold text-violet-700">CD</span>
+                    <div class="min-w-0">
+                      <p class="truncate text-xs font-semibold text-slate-800">Compiler Design</p>
+                      <p class="mt-0.5 font-mono text-[9px] text-slate-400">CS601 <span class="font-sans px-1">·</span> 28 of 30 classes</p>
+                    </div>
+                  </div>
+                  <span class="font-display text-sm font-bold text-emerald-600">93.3%</span>
+                </div>
+                <div class="mt-3 h-1.5 overflow-hidden rounded-full bg-slate-100"><div class="h-full w-[93.3%] rounded-full bg-emerald-500"></div></div>
+              </article>
+              <article class="group rounded-lg border border-amber-100 bg-amber-50/30 p-3.5 transition hover:border-amber-200 sm:px-4">
+                <div class="flex items-center justify-between gap-3">
+                  <div class="flex min-w-0 items-center gap-3">
+                    <span class="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-sky-50 text-[10px] font-bold text-sky-700">DB</span>
+                    <div class="min-w-0">
+                      <p class="truncate text-xs font-semibold text-slate-800">Database Systems</p>
+                      <p class="mt-0.5 font-mono text-[9px] text-slate-400">CS602 <span class="font-sans px-1">·</span> 18 of 24 classes</p>
+                    </div>
+                  </div>
+                  <span class="font-display text-sm font-bold text-amber-600">75.0%</span>
+                </div>
+                <div class="mt-3 h-1.5 overflow-hidden rounded-full bg-amber-100"><div class="h-full w-[75%] rounded-full bg-amber-500"></div></div>
+              </article>
+              <article class="group rounded-lg border border-slate-100 p-3.5 transition hover:border-slate-200 sm:px-4">
+                <div class="flex items-center justify-between gap-3">
+                  <div class="flex min-w-0 items-center gap-3">
+                    <span class="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-cyan-50 text-[10px] font-bold text-cyan-700">CN</span>
+                    <div class="min-w-0">
+                      <p class="truncate text-xs font-semibold text-slate-800">Computer Networks</p>
+                      <p class="mt-0.5 font-mono text-[9px] text-slate-400">CS603 <span class="font-sans px-1">·</span> 25 of 28 classes</p>
+                    </div>
+                  </div>
+                  <span class="font-display text-sm font-bold text-emerald-600">89.3%</span>
+                </div>
+                <div class="mt-3 h-1.5 overflow-hidden rounded-full bg-slate-100"><div class="h-full w-[89.3%] rounded-full bg-emerald-500"></div></div>
+              </article>
+              <article class="group rounded-lg border border-slate-100 p-3.5 transition hover:border-slate-200 sm:px-4">
+                <div class="flex items-center justify-between gap-3">
+                  <div class="flex min-w-0 items-center gap-3">
+                    <span class="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-orange-50 text-[10px] font-bold text-orange-700">ML</span>
+                    <div class="min-w-0">
+                      <p class="truncate text-xs font-semibold text-slate-800">Machine Learning</p>
+                      <p class="mt-0.5 font-mono text-[9px] text-slate-400">CS604 <span class="font-sans px-1">·</span> 21 of 24 classes</p>
+                    </div>
+                  </div>
+                  <span class="font-display text-sm font-bold text-emerald-600">87.5%</span>
+                </div>
+                <div class="mt-3 h-1.5 overflow-hidden rounded-full bg-slate-100"><div class="h-full w-[87.5%] rounded-full bg-emerald-500"></div></div>
+              </article>
+            </div>
+            <div class="mt-4 flex items-start gap-2 rounded-lg bg-amber-50 px-3 py-2.5">
+              <svg viewBox="0 0 20 20" class="mt-0.5 h-3.5 w-3.5 shrink-0 text-amber-600" fill="none" aria-hidden="true"><path d="M10 6v4m0 3h.01M8.3 3.5 2.7 13.2A1.5 1.5 0 0 0 4 15.5h12a1.5 1.5 0 0 0 1.3-2.3l-5.6-9.7a2 2 0 0 0-3.4 0Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <p class="text-[10px] leading-relaxed text-amber-800"><span class="font-semibold">Attendance alert:</span> Database Systems is at the 75% minimum. Try to attend all upcoming classes.</p>
+            </div>
+          </section>
+
+          <section id="announcements" class="card p-5 shadow-soft sm:p-6">
+            <div class="flex items-start justify-between gap-3">
+              <div>
+                <div class="flex items-center gap-2">
+                  <h2 class="font-display text-[16px] font-bold tracking-tight text-slate-900">Announcements</h2>
+                  <span class="grid h-5 min-w-5 place-items-center rounded-full bg-rose-100 px-1.5 text-[9px] font-bold text-rose-700">2</span>
+                </div>
+                <p class="mt-1 text-xs text-slate-400">Latest updates from your campus.</p>
+              </div>
+              <a href="#announcements" class="text-[11px] font-semibold text-brand-600">View all</a>
+            </div>
+            <div class="mt-5 space-y-4">
+              <article class="flex gap-3 border-b border-slate-100 pb-4">
+                <span class="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-rose-50 text-rose-600">
+                  <svg viewBox="0 0 20 20" class="h-4 w-4" fill="none" aria-hidden="true"><path d="M10 3v14M3 10h14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+                </span>
+                <div class="min-w-0 flex-1">
+                  <div class="flex flex-wrap items-center gap-2">
+                    <span class="rounded bg-rose-50 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide text-rose-700">Important</span>
+                    <span class="text-[9px] text-slate-400">2 hours ago</span>
+                  </div>
+                  <h3 class="mt-1.5 text-xs font-semibold leading-snug text-slate-800">Internal Assessment 2 schedule released</h3>
+                  <p class="mt-1 text-[10px] leading-relaxed text-slate-500">Examinations begin October 19. Check your department notice board for the full timetable.</p>
+                  <p class="mt-2 text-[9px] font-medium text-slate-400">Examination Cell <span class="px-1">·</span> All students</p>
+                </div>
+              </article>
+              <article class="flex gap-3 border-b border-slate-100 pb-4">
+                <span class="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-sky-50 text-sky-600">
+                  <svg viewBox="0 0 20 20" class="h-4 w-4" fill="none" aria-hidden="true"><path d="M10 3.5 11.8 8l4.7.5-3.5 3.2.9 4.8-3.9-2.4-4 2.4.9-4.8L3.5 8.5 8.2 8 10 3.5Z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>
+                </span>
+                <div class="min-w-0 flex-1">
+                  <div class="flex flex-wrap items-center gap-2">
+                    <span class="rounded bg-sky-50 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide text-sky-700">Campus</span>
+                    <span class="text-[9px] text-slate-400">Yesterday</span>
+                  </div>
+                  <h3 class="mt-1.5 text-xs font-semibold leading-snug text-slate-800">CodeSprint ’26 registrations are open</h3>
+                  <p class="mt-1 text-[10px] leading-relaxed text-slate-500">Join the annual 24-hour hackathon on October 24–25. Register your team by Friday.</p>
+                  <p class="mt-2 text-[9px] font-medium text-slate-400">Computer Science Department</p>
+                </div>
+              </article>
+              <article class="flex gap-3">
+                <span class="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-violet-50 text-violet-600">
+                  <svg viewBox="0 0 20 20" class="h-4 w-4" fill="none" aria-hidden="true"><path d="M4 5h12v11H4zM7 3.5v3M13 3.5v3M4 8h12M7 11h2M11 11h2M7 13.5h2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </span>
+                <div class="min-w-0 flex-1">
+                  <div class="flex flex-wrap items-center gap-2">
+                    <span class="rounded bg-violet-50 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide text-violet-700">Academic</span>
+                    <span class="text-[9px] text-slate-400">Oct 9</span>
+                  </div>
+                  <h3 class="mt-1.5 text-xs font-semibold leading-snug text-slate-800">Machine Learning lab batch list updated</h3>
+                  <p class="mt-1 text-[10px] leading-relaxed text-slate-500">Please verify your assigned lab slot before attending this week.</p>
+                  <p class="mt-2 text-[9px] font-medium text-slate-400">Dr. Priya Kulkarni <span class="px-1">·</span> CSE students</p>
+                </div>
+              </article>
+            </div>
+            <div class="mt-4 flex items-center gap-2 rounded-lg bg-slate-50 px-3 py-2.5">
+              <span class="h-1.5 w-1.5 rounded-full bg-brand-500"></span>
+              <p class="text-[10px] text-slate-500">You’re all caught up on <span class="font-semibold text-slate-700">student circulars.</span></p>
+            </div>
+          </section>
+        </div>
+
+        <section id="timetable" class="card mt-5 overflow-hidden shadow-soft">
+          <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 px-5 py-4 sm:px-6">
+            <div>
+              <div class="flex items-center gap-2">
+                <h2 class="font-display text-[16px] font-bold tracking-tight text-slate-900">This week’s timetable</h2>
+                <span class="rounded bg-slate-100 px-2 py-1 text-[9px] font-semibold text-slate-500">SEM 6 · SECTION A</span>
+              </div>
+              <p class="mt-1 text-xs text-slate-400">October 12 – October 17, 2026</p>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="hidden text-[10px] text-slate-400 sm:inline">All times local</span>
+              <a href="#timetable" class="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 px-3 py-2 text-[10px] font-semibold text-slate-600">
+                <svg viewBox="0 0 20 20" class="h-3.5 w-3.5" fill="none" aria-hidden="true"><path d="M4 6h12M4 10h12M4 14h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+                Full schedule
+              </a>
+            </div>
+          </div>
+          <div class="scrollbar-hide overflow-x-auto">
+            <div class="min-w-[780px]">
+              <div class="grid grid-cols-[92px_repeat(6,minmax(110px,1fr))] border-b border-slate-100 bg-slate-50/70">
+                <div class="px-4 py-3 text-[9px] font-bold uppercase tracking-wide text-slate-400">Time</div>
+                <div class="border-l border-slate-100 px-3 py-3 text-center"><p class="text-[10px] font-semibold text-slate-500">MON</p><p class="mt-0.5 text-[9px] text-slate-400">12 Oct</p></div>
+                <div class="border-l border-slate-100 px-3 py-3 text-center"><p class="text-[10px] font-semibold text-slate-500">TUE</p><p class="mt-0.5 text-[9px] text-slate-400">13 Oct</p></div>
+                <div class="border-l border-slate-100 px-3 py-3 text-center"><p class="text-[10px] font-semibold text-slate-500">WED</p><p class="mt-0.5 text-[9px] text-slate-400">14 Oct</p></div>
+                <div class="border-l border-slate-100 px-3 py-3 text-center"><p class="text-[10px] font-semibold text-slate-500">THU</p><p class="mt-0.5 text-[9px] text-slate-400">15 Oct</p></div>
+                <div class="border-l border-slate-100 px-3 py-3 text-center"><p class="text-[10px] font-semibold text-slate-500">FRI</p><p class="mt-0.5 text-[9px] text-slate-400">16 Oct</p></div>
+                <div class="border-l border-slate-100 px-3 py-3 text-center"><p class="text-[10px] font-semibold text-slate-500">SAT</p><p class="mt-0.5 text-[9px] text-slate-400">17 Oct</p></div>
+              </div>
+              <div class="grid grid-cols-[92px_repeat(6,minmax(110px,1fr))] border-b border-slate-100">
+                <div class="flex flex-col justify-center px-4 py-3"><span class="font-mono text-[9px] font-medium text-slate-600">09:00</span><span class="font-mono text-[8px] text-slate-400">10:00</span></div>
+                <div class="border-l border-slate-100 p-1.5"><div class="h-full rounded-md border-l-2 border-violet-400 bg-violet-50 px-2 py-2"><p class="text-[9px] font-bold leading-tight text-violet-900">Compiler Design</p><p class="mt-1 font-mono text-[8px] text-violet-700">CS601</p><p class="mt-1 text-[8px] text-slate-500">C-204 · Rao</p></div></div>
+                <div class="border-l border-slate-100 p-1.5"><div class="h-full rounded-md border-l-2 border-sky-400 bg-sky-50 px-2 py-2"><p class="text-[9px] font-bold leading-tight text-sky-900">Database Systems</p><p class="mt-1 font-mono text-[8px] text-sky-700">CS602</p><p class="mt-1 text-[8px] text-slate-500">B-112 · Shetty</p></div></div>
+                <div class="border-l border-slate-100 p-1.5"><div class="h-full rounded-md border-l-2 border-emerald-400 bg-emerald-50 px-2 py-2"><p class="text-[9px] font-bold leading-tight text-emerald-900">Computer Networks</p><p class="mt-1 font-mono text-[8px] text-emerald-700">CS603</p><p class="mt-1 text-[8px] text-slate-500">C-106 · Nair</p></div></div>
+                <div class="border-l border-slate-100 p-1.5"><div class="h-full rounded-md border-l-2 border-violet-400 bg-violet-50 px-2 py-2"><p class="text-[9px] font-bold leading-tight text-violet-900">Compiler Design</p><p class="mt-1 font-mono text-[8px] text-violet-700">CS601</p><p class="mt-1 text-[8px] text-slate-500">C-204 · Rao</p></div></div>
+                <div class="border-l border-slate-100 p-1.5"><div class="h-full rounded-md border-l-2 border-orange-400 bg-orange-50 px-2 py-2"><p class="text-[9px] font-bold leading-tight text-orange-900">Machine Learning</p><p class="mt-1 font-mono text-[8px] text-orange-700">CS604</p><p class="mt-1 text-[8px] text-slate-500">A-301 · Kulkarni</p></div></div>
+                <div class="border-l border-slate-100 p-1.5"><div class="h-full rounded-md border-l-2 border-sky-400 bg-sky-50 px-2 py-2"><p class="text-[9px] font-bold leading-tight text-sky-900">Database Systems</p><p class="mt-1 font-mono text-[8px] text-sky-700">CS602</p><p class="mt-1 text-[8px] text-slate-500">B-112 · Shetty</p></div></div>
+              </div>
+              <div class="grid grid-cols-[92px_repeat(6,minmax(110px,1fr))] border-b border-slate-100">
+                <div class="flex flex-col justify-center px-4 py-3"><span class="font-mono text-[9px] font-medium text-slate-600">10:15</span><span class="font-mono text-[8px] text-slate-400">11:15</span></div>
+                <div class="border-l border-slate-100 p-1.5"><div class="h-full rounded-md border-l-2 border-sky-400 bg-sky-50 px-2 py-2"><p class="text-[9px] font-bold leading-tight text-sky-900">Database Systems</p><p class="mt-1 font-mono text-[8px] text-sky-700">CS602</p><p class="mt-1 text-[8px] text-slate-500">B-112 · Shetty</p></div></div>
+                <div class="border-l border-slate-100 p-1.5"><div class="h-full rounded-md border-l-2 border-emerald-400 bg-emerald-50 px-2 py-2"><p class="text-[9px] font-bold leading-tight text-emerald-900">Computer Networks</p><p class="mt-1 font-mono text-[8px] text-emerald-700">CS603</p><p class="mt-1 text-[8px] text-slate-500">C-106 · Nair</p></div></div>
+                <div class="border-l border-slate-100 p-1.5"><div class="h-full rounded-md border-l-2 border-violet-400 bg-violet-50 px-2 py-2"><p class="text-[9px] font-bold leading-tight text-violet-900">Compiler Design</p><p class="mt-1 font-mono text-[8px] text-violet-700">CS601</p><p class="mt-1 text-[8px] text-slate-500">C-204 · Rao</p></div></div>
+                <div class="border-l border-slate-100 p-1.5"><div class="h-full rounded-md border-l-2 border-orange-400 bg-orange-50 px-2 py-2"><p class="text-[9px] font-bold leading-tight text-orange-900">Machine Learning</p><p class="mt-1 font-mono text-[8px] text-orange-700">CS604</p><p class="mt-1 text-[8px] text-slate-500">A-301 · Kulkarni</p></div></div>
+                <div class="border-l border-slate-100 p-1.5"><div class="h-full rounded-md border-l-2 border-indigo-400 bg-indigo-50 px-2 py-2"><p class="text-[9px] font-bold leading-tight text-indigo-900">Software Eng.</p><p class="mt-1 font-mono text-[8px] text-indigo-700">CS605</p><p class="mt-1 text-[8px] text-slate-500">C-202 · Bhat</p></div></div>
+                <div class="border-l border-slate-100 p-1.5"><div class="h-full rounded-md border-l-2 border-emerald-400 bg-emerald-50 px-2 py-2"><p class="text-[9px] font-bold leading-tight text-emerald-900">Computer Networks</p><p class="mt-1 font-mono text-[8px] text-emerald-700">CS603</p><p class="mt-1 text-[8px] text-slate-500">C-106 · Nair</p></div></div>
+              </div>
+              <div class="grid grid-cols-[92px_repeat(6,minmax(110px,1fr))]">
+                <div class="flex flex-col justify-center px-4 py-3"><span class="font-mono text-[9px] font-medium text-slate-600">14:00</span><span class="font-mono text-[8px] text-slate-400">16:00</span></div>
+                <div class="border-l border-slate-100 p-1.5"><div class="h-full rounded-md border-l-2 border-orange-400 bg-orange-50 px-2 py-2"><p class="text-[9px] font-bold leading-tight text-orange-900">ML Lab</p><p class="mt-1 font-mono text-[8px] text-orange-700">CSL604</p><p class="mt-1 text-[8px] text-slate-500">AI Lab 2 · Kulkarni</p></div></div>
+                <div class="border-l border-slate-100 p-1.5"><div class="h-full rounded-md border-l-2 border-violet-400 bg-violet-50 px-2 py-2"><p class="text-[9px] font-bold leading-tight text-violet-900">Compiler Lab</p><p class="mt-1 font-mono text-[8px] text-violet-700">CSL601</p><p class="mt-1 text-[8px] text-slate-500">Lab 302 · Rao</p></div></div>
+                <div class="border-l border-slate-100 p-1.5"><div class="h-full rounded-md border-l-2 border-indigo-400 bg-indigo-50 px-2 py-2"><p class="text-[9px] font-bold leading-tight text-indigo-900">Software Eng.</p><p class="mt-1 font-mono text-[8px] text-indigo-700">CS605</p><p class="mt-1 text-[8px] text-slate-500">C-202 · Bhat</p></div></div>
+                <div class="border-l border-slate-100 p-1.5"><div class="h-full rounded-md border-l-2 border-sky-400 bg-sky-50 px-2 py-2"><p class="text-[9px] font-bold leading-tight text-sky-900">DB Lab</p><p class="mt-1 font-mono text-[8px] text-sky-700">CSL602</p><p class="mt-1 text-[8px] text-slate-500">Lab 208 · Shetty</p></div></div>
+                <div class="border-l border-slate-100 p-1.5"><div class="h-full rounded-md border-l-2 border-emerald-400 bg-emerald-50 px-2 py-2"><p class="text-[9px] font-bold leading-tight text-emerald-900">Networks Lab</p><p class="mt-1 font-mono text-[8px] text-emerald-700">CSL603</p><p class="mt-1 text-[8px] text-slate-500">Net Lab · Nair</p></div></div>
+                <div class="border-l border-slate-100 p-1.5"><div class="flex h-full items-center justify-center rounded-md bg-slate-50 text-[9px] font-medium text-slate-400">No class</div></div>
+              </div>
+            </div>
+          </div>
+          <div class="flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-slate-100 px-5 py-3 text-[9px] text-slate-500 sm:px-6">
+            <span class="font-semibold text-slate-400">SUBJECTS</span>
+            <span class="flex items-center gap-1.5"><i class="h-2 w-2 rounded-sm bg-violet-400"></i> Compiler Design</span>
+            <span class="flex items-center gap-1.5"><i class="h-2 w-2 rounded-sm bg-sky-400"></i> Database Systems</span>
+            <span class="flex items-center gap-1.5"><i class="h-2 w-2 rounded-sm bg-emerald-400"></i> Computer Networks</span>
+            <span class="flex items-center gap-1.5"><i class="h-2 w-2 rounded-sm bg-orange-400"></i> Machine Learning</span>
+          </div>
+        </section>
+
+        <footer class="mt-6 flex flex-col items-start justify-between gap-2 border-t border-slate-200/80 pt-4 text-[10px] text-slate-400 sm:flex-row sm:items-center">
+          <p>© 2026 Colexa <span class="px-1">·</span> Apex Institute of Technology</p>
+          <p>Need help? <a href="#support" class="font-medium text-slate-500">Contact your academic office</a></p>
+        </footer>
+      </div>
+    </main>
+  </div>
+</body>
+</html>
