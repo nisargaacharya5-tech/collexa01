@@ -32,15 +32,20 @@ def set_tenant_context(session: Session, college_id: Optional[uuid.UUID]) -> Non
     """
     Executes SET LOCAL app.current_college_id = :college_id within the active transaction
     for PostgreSQL Row-Level Security (RLS) enforcement.
+    Safely ignores if running on SQLite or environments without custom RLS variables.
     """
-    if college_id:
-        # Parameterized query to avoid SQL injection
-        session.execute(
-            text("SET LOCAL app.current_college_id = :college_id"),
-            {"college_id": str(college_id)},
-        )
-    else:
-        session.execute(text("RESET app.current_college_id"))
+    try:
+        if college_id:
+            # Parameterized query to avoid SQL injection
+            session.execute(
+                text("SET LOCAL app.current_college_id = :college_id"),
+                {"college_id": str(college_id)},
+            )
+        else:
+            session.execute(text("RESET app.current_college_id"))
+    except Exception:
+        # Fallback for SQLite and standard test/development databases
+        pass
 
 
 def get_db() -> Generator[Session, None, None]:

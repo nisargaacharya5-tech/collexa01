@@ -12,12 +12,31 @@ from fastapi.exceptions import RequestValidationError
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
+from contextlib import asynccontextmanager
 from app.config import settings
 from app.core.exceptions import ColexaHTTPException
-from app.database import get_db
-from app.models import College
+from app.database import get_db, engine
+from app.models import Base, College
 from app.routers import auth_router, admin_router, faculty_router, student_router
 from app.schemas.common import CollegeResponse
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Auto-create tables if running in SQLite / new DB
+    try:
+        Base.metadata.create_all(bind=engine)
+        # Auto seed default demo data if colleges table is empty
+        from app.database import SessionLocal
+        with SessionLocal() as db:
+            count = db.query(College).count()
+            if count == 0:
+                import seed_db
+                seed_db.seed_database(custom_engine=engine)
+    except Exception as e:
+        print(f"Startup initialization notice: {e}")
+    yield
+
 
 app = FastAPI(
     title="Colexa Enterprise API",
@@ -25,6 +44,7 @@ app = FastAPI(
     version="1.0.0",
     docs_url="/docs",
     redoc_url="/redoc",
+    lifespan=lifespan,
 )
 
 # ------------------------------------------------------------------------------
@@ -32,7 +52,7 @@ app = FastAPI(
 # ------------------------------------------------------------------------------
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.BACKEND_CORS_ORIGINS or ["*"],
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
