@@ -79,7 +79,7 @@ def get_database_url(custom_url: str = None) -> str:
 
 
 # Standard bcrypt hash for "Password@123" to enable immediate login testing
-DEFAULT_PASSWORD_HASH = "$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPj4L5b9mke2G"
+DEFAULT_PASSWORD_HASH = "$2b$12$Lg/mfdIljawuK4wrIY01J.wyekoYl1MVEpB9Kd3xeExsjGKbuqVxO"
 DEFAULT_RAW_PASSWORD = "Password@123"
 
 # Realistic names catalog

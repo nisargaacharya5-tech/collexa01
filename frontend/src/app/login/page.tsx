@@ -31,8 +31,11 @@ export default function LoginPage() {
   useEffect(() => {
     if (colleges.length > 0 && !selectedCollegeId) {
       setSelectedCollegeId(colleges[0].id);
+      if (!email) {
+        setEmail('admin@apextech.edu');
+      }
     }
-  }, [colleges, selectedCollegeId]);
+  }, [colleges, selectedCollegeId, email]);
 
   const activeCollege = colleges.find((c) => c.id === selectedCollegeId);
 
@@ -76,13 +79,13 @@ export default function LoginPage() {
   const fillDemoCredentials = (role: 'ADMIN' | 'FACULTY' | 'STUDENT') => {
     setErrorMsg(null);
     if (role === 'ADMIN') {
-      setEmail('admin@apex.edu');
+      setEmail('admin@apextech.edu');
       setPassword('Password@123');
     } else if (role === 'FACULTY') {
-      setEmail('fac.sharma@apex.edu');
+      setEmail('arvind.kumar@apextech.edu');
       setPassword('Password@123');
     } else if (role === 'STUDENT') {
-      setEmail('stu.aarav.sharma@apex.edu');
+      setEmail('aarav.sharma@student.apextech.edu');
       setPassword('Password@123');
     }
   };
@@ -172,7 +175,7 @@ export default function LoginPage() {
             <Input
               label="Email Address"
               type="email"
-              placeholder="e.g. admin@apex.edu"
+              placeholder="e.g. admin@apextech.edu or admin@apex.edu"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required

@@ -61,13 +61,25 @@ def login(
     # Set PostgreSQL RLS context
     set_tenant_context(db, active_college.id)
 
-    # 2. Query user by tenant and email
+    # 2. Query user by tenant and email (with domain alias fallback support)
     normalized_email = payload.email.strip().lower()
+    email_candidates = [normalized_email]
+    if "@apex.edu" in normalized_email:
+        email_candidates.append(normalized_email.replace("@apex.edu", "@apextech.edu"))
+        email_candidates.append(normalized_email.replace("@apex.edu", "@student.apextech.edu"))
+    elif "@apextech.edu" in normalized_email:
+        email_candidates.append(normalized_email.replace("@apextech.edu", "@apex.edu"))
+    if "@horizon.edu" in normalized_email:
+        email_candidates.append(normalized_email.replace("@horizon.edu", "@horizonuniv.edu"))
+        email_candidates.append(normalized_email.replace("@horizon.edu", "@student.horizonuniv.edu"))
+    elif "@horizonuniv.edu" in normalized_email:
+        email_candidates.append(normalized_email.replace("@horizonuniv.edu", "@horizon.edu"))
+
     query = (
         select(User)
         .where(
             User.college_id == active_college.id,
-            User.email == normalized_email,
+            User.email.in_(email_candidates),
             User.is_active == True,
         )
         .options(
