@@ -10,13 +10,16 @@ from sqlalchemy.orm import sessionmaker, Session
 
 from app.config import settings
 
+is_sqlite = settings.sync_database_url.startswith("sqlite")
+connect_args = {"check_same_thread": False} if is_sqlite else {}
+engine_kwargs = {"connect_args": connect_args, "echo": False}
+if not is_sqlite:
+    engine_kwargs.update({"pool_pre_ping": True, "pool_size": 10, "max_overflow": 20})
+
 # Create engine
 engine = create_engine(
     settings.sync_database_url,
-    pool_pre_ping=True,
-    pool_size=10,
-    max_overflow=20,
-    echo=False,
+    **engine_kwargs,
 )
 
 # Session factory

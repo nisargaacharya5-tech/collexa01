@@ -49,8 +49,15 @@ class Settings(BaseSettings):
     @property
     def sync_database_url(self) -> str:
         if self.DATABASE_URL:
-            return self.DATABASE_URL
-        return f"postgresql+psycopg2://{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}@{self.POSTGRES_HOST}:{self.POSTGRES_PORT}/{self.POSTGRES_DB}"
+            # Render PostgreSQL URLs start with postgres://, SQLAlchemy requires postgresql://
+            url = self.DATABASE_URL
+            if url.startswith("postgres://"):
+                url = url.replace("postgres://", "postgresql+psycopg2://", 1)
+            elif url.startswith("postgresql://") and not url.startswith("postgresql+psycopg2://"):
+                url = url.replace("postgresql://", "postgresql+psycopg2://", 1)
+            return url
+        # If no DATABASE_URL environment variable is provided, use SQLite fallback
+        return "sqlite:///./colexa.db"
 
 
 settings = Settings()
