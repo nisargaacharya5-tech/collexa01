@@ -132,15 +132,21 @@ def clean_existing_seeded_data(session, college_codes: list):
     print("    - Cleaned up existing records successfully.")
 
 
-def seed_database(db_url: str, clean: bool = False, dry_run: bool = False):
+def seed_database(db_url: str = None, clean: bool = False, dry_run: bool = False, custom_engine=None):
     """Main database seeding function."""
     print("=" * 72)
     print("                 COLEXA MULTI-TENANT DATABASE SEEDER")
     print("=" * 72)
-    safe_display_url = db_url.split("@")[-1] if "@" in db_url else db_url
-    print(f"[*] Target Database: {safe_display_url}")
 
-    engine = create_engine(db_url, echo=False)
+    if custom_engine is not None:
+        engine = custom_engine
+        print(f"[*] Target Database: Provided Engine ({engine.url.render_as_string(hide_password=True)})")
+    else:
+        if not db_url:
+            raise ValueError("Either db_url or custom_engine must be provided to seed_database")
+        safe_display_url = db_url.split("@")[-1] if "@" in db_url else db_url
+        print(f"[*] Target Database: {safe_display_url}")
+        engine = create_engine(db_url, echo=False)
 
     # Test connection
     try:
@@ -612,7 +618,8 @@ def seed_database(db_url: str, clean: bool = False, dry_run: bool = False):
         sys.exit(1)
     finally:
         session.close()
-        engine.dispose()
+        if custom_engine is None:
+            engine.dispose()
 
 
 def main():

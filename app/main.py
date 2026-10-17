@@ -21,6 +21,8 @@ from app.routers import auth_router, admin_router, faculty_router, student_route
 from app.schemas.common import CollegeResponse
 
 
+from fastapi import Depends
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Auto-create tables if running in SQLite / new DB
@@ -31,8 +33,29 @@ async def lifespan(app: FastAPI):
         with SessionLocal() as db:
             count = db.query(College).count()
             if count == 0:
-                import seed_db
-                seed_db.seed_database(custom_engine=engine)
+                print("[*] Colleges table is empty. Running initial database seed...")
+                try:
+                    import seed_db
+                    seed_db.seed_database(custom_engine=engine)
+                except Exception as seed_err:
+                    print(f"[!] Comprehensive seeder encountered an issue: {seed_err}")
+                    # Ensure at least the two core tenant colleges exist
+                    db.rollback()
+                    c1 = College(
+                        code="apex-tech",
+                        name="Apex Institute of Technology",
+                        domain="apextech.edu",
+                        status="ACTIVE",
+                    )
+                    c2 = College(
+                        code="horizon-univ",
+                        name="Horizon University",
+                        domain="horizon.edu",
+                        status="ACTIVE",
+                    )
+                    db.add_all([c1, c2])
+                    db.commit()
+                    print("[OK] Fallback tenant colleges successfully created.")
     except Exception as e:
         print(f"Startup initialization notice: {e}")
     yield
@@ -112,17 +135,24 @@ def health_check():
     tags=["Tenant Discovery"],
     summary="List active colleges for tenant selection",
 )
-def list_active_colleges():
+def list_active_colleges(db: Session = Depends(get_db)):
     """Public discovery endpoint enabling users and frontend to look up colleges."""
-    db_gen = get_db()
-    db: Session = next(db_gen)
     try:
         colleges = db.scalars(
             select(College).where(College.status == "ACTIVE").order_by(College.name)
         ).all()
         return colleges
-    finally:
-        db_gen.close()
+    except Exception as exc:
+        print(f"[!] Warning: list_active_colleges query issue: {exc}")
+        # Auto-create tables and return default list if table wasn't ready
+        try:
+            Base.metadata.create_all(bind=engine)
+            colleges = db.scalars(
+                select(College).where(College.status == "ACTIVE").order_by(College.name)
+            ).all()
+            return colleges
+        except Exception:
+            return []
 
 
 # ------------------------------------------------------------------------------
